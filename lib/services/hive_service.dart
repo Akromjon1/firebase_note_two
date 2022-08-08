@@ -10,7 +10,7 @@ class HiveService{
   }
 
   static readData(StorageKey key)async{
-    await  _box.get(key.name, defaultValue: "No data");
+    await  _box.get(key.name, defaultValue: "null");
   }
 
   static Future<void> removeData(StorageKey key) async {
