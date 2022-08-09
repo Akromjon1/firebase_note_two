@@ -16,6 +16,8 @@ dependencies:
   firebase_core: ^1.20.0
   firebase_auth: ^3.6.2
   firebase_database: ^9.1.0
+  firebase_storage: ^10.3.4
+  image_picker: ^0.8.5+3
   hive_flutter:
 
 dev_dependencies:

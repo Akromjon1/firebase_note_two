@@ -15,6 +15,8 @@ class HomePage extends StatelessWidget {
   Future<void> _showMyDialog(BuildContext context, int id, String userId, key) async {
     TextEditingController titleUpdateController = TextEditingController();
     TextEditingController contentUpdateController = TextEditingController();
+    TextEditingController nameUpdateController = TextEditingController();
+    TextEditingController lastnameUpdateController = TextEditingController();
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -25,14 +27,26 @@ class HomePage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
+                controller: nameUpdateController,
+                decoration: const InputDecoration(
+                  hintText: "Name",
+                ),
+              ),
+              TextField(
+                controller: lastnameUpdateController,
+                decoration: const InputDecoration(
+                  hintText: "Last name",
+                ),
+              ),
+              TextField(
                 controller: titleUpdateController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Title",
                 ),
               ),
               TextField(
                 controller: contentUpdateController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Content",
                 ),
               ),
@@ -40,14 +54,10 @@ class HomePage extends StatelessWidget {
           ),
           actions: <Widget>[
             IconButton(onPressed: (){
-              print(contentUpdateController.text.trim().toString());
-              Post p = Post(userId: userId, id: id, content: contentUpdateController.text, title: titleUpdateController.text, );
-              RTDBService.updatePost(p, key);
               Navigator.of(context).pop();
             }, icon: const Icon(Icons.cancel_outlined)),
             IconButton(onPressed: (){
-              print(contentUpdateController.text.trim().toString());
-              Post p = Post(userId: userId, id: id, content: contentUpdateController.text, title: titleUpdateController.text, );
+              Post p = Post(userId: userId, id: id, content: contentUpdateController.text, title: titleUpdateController.text, name: nameUpdateController.text, lastName: lastnameUpdateController.text);
               RTDBService.updatePost(p, key);
               Navigator.of(context).pop();
             }, icon: const Icon(Icons.done)),
@@ -83,7 +93,7 @@ class HomePage extends StatelessWidget {
           return ListView.builder(
               itemCount: posts.length,
               itemBuilder: (context, index){
-                return _itemOfList(posts[index], snapshot.data!.snapshot.children.elementAt(index).key, context, posts[index].id, AuthService.auth.currentUser!.uid);
+                return itemOfGrid(posts[index], snapshot.data!.snapshot.children.elementAt(index).key, context, posts[index].id, AuthService.auth.currentUser!.uid);
               });
         },
       ),
@@ -118,7 +128,61 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-
+  Widget itemOfGrid(Post post, key, context, int id, String userid){
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.width,
+            child: post.image != null
+                ? Image.network(post.image!, fit: BoxFit.cover,)
+                : const Image(
+              image: NetworkImage("https://i.stack.imgur.com/y9DpT.jpg",),
+              fit: BoxFit.cover,
+            ),
+          ),
+          SizedBox(height: 10,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                 Row(
+                   children: [
+                     Text(post.name,style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                     const SizedBox(width: 10,),
+                     Text(post.lastName,style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                   ],
+                 ),
+                  Text(post.title),
+                  Text(post.content),
+                ],
+              ),
+              Row(
+                children: [
+                  GestureDetector(
+                      onTap: ()=> _showMyDialog(context, id, userid, key),
+                      child: const Icon(Icons.edit, color: Colors.grey,)),
+                  IconButton(
+                    onPressed: (){
+                      RTDBService.deletePost(key);
+                      print(key);
+                    },
+                    icon: const Icon(Icons.delete, color: Colors.grey,),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 

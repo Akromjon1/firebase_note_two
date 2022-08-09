@@ -3,6 +3,8 @@ class Post {
   late String userId;
   late String title;
   late String content;
+  late String name;
+  late String lastName;
   String? image;
 
   Post({
@@ -10,7 +12,7 @@ class Post {
     required this.userId,
     required this.title,
     required this.content,
-    this.image});
+    this.image, required this.name, required this.lastName});
 
   Post.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -18,6 +20,8 @@ class Post {
     title = json['title'];
     content = json['content'];
     image = json['image'];
+    name = json['name'];
+    lastName = json['lastName'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -26,5 +30,7 @@ class Post {
     'title': title,
     'content': content,
     'image': image,
+    'name': name,
+    'lastName': lastName,
   };
 }
